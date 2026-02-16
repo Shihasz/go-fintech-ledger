@@ -18,9 +18,14 @@ func LoadConfig(path string) (config Config, err error) {
 
 	viper.AutomaticEnv() // Automatically override values with Environment Variables
 
+	_ = viper.BindEnv("SERVER_ADDRESS")
+
 	err = viper.ReadInConfig()
 	if err != nil {
-		return
+		// If file not found, rely on environment variables
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return
+		}
 	}
 
 	err = viper.Unmarshal(&config)

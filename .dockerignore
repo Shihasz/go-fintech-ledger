@@ -1,0 +1,7 @@
+.git
+.vscode
+bin
+vendor
+.env
+app.env
+infra
