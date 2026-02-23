@@ -24,3 +24,14 @@ clean:
 	docker rmi $(APP_NAME):$(DOCKER_TAG) || true
 
 .PHONY: run-auth docker-build-auth docker-run-auth clean
+
+# Database commands
+db-up:
+	docker-compose up -d postgres
+
+db-down:
+	docker-compose down
+
+# Helper to verify connection
+db-logs:
+	docker logs -f fintech-postgres
