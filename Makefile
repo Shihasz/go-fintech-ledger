@@ -6,6 +6,9 @@ DOCKER_TAG=latest
 GOBASE=$(shell pwd)
 GOBIN=$(GOBASE)/bin
 
+# Database variables
+DB_URL=postgresql://root:secret@localhost:5432/fintech_ledger?sslmode=disable
+
 # 1. Run locally (without Docker)
 run-auth:
 	go run cmd/auth-service/main.go
@@ -35,3 +38,10 @@ db-down:
 # Helper to verify connection
 db-logs:
 	docker logs -f fintech-postgres
+
+# Database Migrations
+migrate-up:
+	~/go/bin/migrate -path infra/db/migration -database "$(DB_URL)" -verbose up
+
+migrate-down:
+	~/go/bin/migrate -path infra/db/migration -database "$(DB_URL)" -verbose down
