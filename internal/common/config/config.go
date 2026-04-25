@@ -7,7 +7,7 @@ import (
 // Config holds all configuration for the application
 type Config struct {
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
-	// To add rest later
+	DBSource      string `mapstructure:"DB_SOURCE"`
 }
 
 // LoadConfig reads configuration from file or environment variables.
@@ -19,6 +19,7 @@ func LoadConfig(path string) (config Config, err error) {
 	viper.AutomaticEnv() // Automatically override values with Environment Variables
 
 	_ = viper.BindEnv("SERVER_ADDRESS")
+	_ = viper.BindEnv("DB_SOURCE")
 
 	err = viper.ReadInConfig()
 	if err != nil {
