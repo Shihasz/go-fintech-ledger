@@ -5,6 +5,8 @@ import (
 	"log"
 
 	"github.com/Shihasz/go-fintech-ledger/internal/common/config"
+	"github.com/Shihasz/go-fintech-ledger/internal/ledger/api"
+	"github.com/Shihasz/go-fintech-ledger/internal/ledger/db"
 	_ "github.com/lib/pq"
 )
 
@@ -22,10 +24,15 @@ func main() {
 	}
 	defer conn.Close()
 
-	// Ping the database to ensure the connection is actually valid
-	if err = conn.Ping(); err != nil {
-		log.Fatal("cannot ping db:", err)
-	}
+	// Initialize the sqlc store
+	store := db.New(conn)
 
-	log.Println("✅ Successfully connected to the FinTech Ledger Database!")
+	// Initialize and start the Gin server
+	server := api.NewServer(store)
+	log.Printf("🚀 Starting Ledger Service on port %s", cfg.ServerAddress)
+
+	err = server.Start(cfg.ServerAddress)
+	if err != nil {
+		log.Fatal("cannot start server:", err)
+	}
 }
