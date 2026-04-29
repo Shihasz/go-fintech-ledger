@@ -21,7 +21,8 @@ func NewServer(store *db.Queries) *Server {
 		c.JSON(200, gin.H{"status": "UP", "service": "ledger"})
 	})
 
-	// TODO CRUD routes
+	router.POST("/accounts", server.createAccount)
+	router.GET("/accounts/:id", server.getAccount)
 
 	server.router = router
 	return server
