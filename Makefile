@@ -45,3 +45,13 @@ migrate-up:
 
 migrate-down:
 	~/go/bin/migrate -path infra/db/migration -database "$(DB_URL)" -verbose down
+
+# Run all
+stack-up:
+	docker-compose up --build -d
+
+stack-down:
+	docker-compose down
+
+stack-logs:
+	docker-compose logs -f ledger-api

@@ -27,6 +27,23 @@ services:
       - postgres
     networks:
       - fintech-network
+
+  # Ledger Service
+  ledger-api:
+    build:
+      context: .
+      dockerfile: cmd/ledger-service/Dockerfile
+    container_name: fintech-ledger-api
+    ports:
+      - "8081:8081"
+    environment:
+      # Docker internal DNS: Connect using the database container name!
+      - DB_SOURCE=postgresql://root:secret@fintech-postgres:5432/fintech_ledger?sslmode=disable
+      - SERVER_ADDRESS=:8081
+    depends_on:
+      - postgres
+    networks:
+      - fintech-network
   
 volumes:
   postgres_data:
