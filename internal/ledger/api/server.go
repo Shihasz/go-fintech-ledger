@@ -28,7 +28,7 @@ func NewServer(store *db.Queries) *Server {
 	return server
 }
 
-// Start runs the HTTP server on a specific address.
-func (server *Server) Start(address string) error {
-	return server.router.Run(address)
+// GetRouter returns the underlying Gin engine
+func (server *Server) GetRouter() *gin.Engine {
+	return server.router
 }
