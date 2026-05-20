@@ -55,3 +55,6 @@ stack-down:
 
 stack-logs:
 	docker-compose logs -f ledger-api
+
+test:
+	go test -v ./...
