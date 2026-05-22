@@ -11,8 +11,23 @@ jobs:
   go-quality:
     name: Lint & Test (Go)
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
+    # 1. Spin up a temporary PostgreSQL database for this job
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: fintech_ledger
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -21,15 +36,25 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.25'
-      
+
       - name: Install Dependencies
         run: go mod download
+
+      # 2. Download golang-migrate so we can build the tables
+      - name: Install golang-migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.18.1/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/local/bin/migrate
+
+      # 3. Apply the database schema
+      - name: Run Database Migrations
+        run: migrate -path infra/db/migration -database "postgresql://root:secret@127.0.0.1:5432/fintech_ledger?sslmode=disable" -verbose up
 
       - name: Run Vet (Static Analysis)
         run: go vet ./...
 
+      # 4. Run tests
       - name: Run Tests
-        # Running all tests in the project
         run: go test -v ./...
 
   # Job 2: Docker Build Check
