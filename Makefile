@@ -46,6 +46,9 @@ migrate-up:
 migrate-down:
 	~/go/bin/migrate -path infra/db/migration -database "$(DB_URL)" -verbose down
 
+sqlc:
+	~/go/bin/sqlc generate
+
 # Run all
 stack-up:
 	docker-compose up --build -d

@@ -8,15 +8,18 @@ import (
 )
 
 func createRandomAccount(t *testing.T) Account {
+	// Create a real user in the database first
+	user := createRandomUser(t)
+
+	// Use that user's username as the account owner
 	arg := CreateAccountParams{
-		Owner:    "John Doe", // In a real app, we'd randomize this string
+		Owner:    user.Username,
 		Balance:  0,
 		Currency: "USD",
 	}
 
 	account, err := testQueries.CreateAccount(context.Background(), arg)
 
-	// Testify's require stops the test immediately if it fails
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 
