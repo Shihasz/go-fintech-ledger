@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/Shihasz/go-fintech-ledger/internal/common/token"
 	"github.com/Shihasz/go-fintech-ledger/internal/ledger/db"
 	"github.com/gin-gonic/gin"
 )
 
 // createAccountRequest defines the JSON body we expect from the user.
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,oneof=USD EUR GBP"`
 }
 
@@ -23,9 +23,12 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		return
 	}
 
+	// Extract the authenticated payload from middleware context
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	// Map the request to the sqlc database parameters
 	arg := db.CreateAccountParams{
-		Owner:    req.Owner,
+		Owner:    authPayload.Username,
 		Currency: req.Currency,
 		Balance:  0, // Initial balance is always 0
 	}

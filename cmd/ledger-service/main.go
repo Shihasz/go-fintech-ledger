@@ -32,7 +32,10 @@ func main() {
 
 	// Initialize the sqlc store and Gin server
 	store := db.New(conn)
-	server := api.NewServer(store)
+	server, err := api.NewServer(cfg, store)
+	if err != nil {
+		log.Fatal("cannot create server:", err)
+	}
 
 	// Create a custom HTTP server
 	srv := &http.Server{
