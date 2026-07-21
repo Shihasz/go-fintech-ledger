@@ -10,13 +10,13 @@ import (
 // Server serves HTTP requests for ledger service.
 type Server struct {
 	config     config.Config
-	store      *db.Queries // sqlc
+	store      *db.Store
 	tokenMaker *token.JWTMaker
 	router     *gin.Engine
 }
 
 // NewServer creates a new HTTP server and sets up routing.
-func NewServer(config config.Config, store *db.Queries) (*Server, error) {
+func NewServer(config config.Config, store *db.Store) (*Server, error) {
 	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, err
@@ -40,6 +40,8 @@ func NewServer(config config.Config, store *db.Queries) (*Server, error) {
 
 	authRoutes.POST("/accounts", server.createAccount)
 	authRoutes.GET("/accounts/:id", server.getAccount)
+
+	authRoutes.POST("/transfers", server.createTransfer)
 
 	server.router = router
 	return server, nil

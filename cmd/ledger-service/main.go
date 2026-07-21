@@ -31,7 +31,7 @@ func main() {
 	// Manually close the connection during shutdown
 
 	// Initialize the sqlc store and Gin server
-	store := db.New(conn)
+	store := db.NewStore(conn)
 	server, err := api.NewServer(cfg, store)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
